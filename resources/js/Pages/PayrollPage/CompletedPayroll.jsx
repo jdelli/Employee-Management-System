@@ -154,13 +154,59 @@ const PayrollTableComplete = () => {
                   <p><strong>Name:</strong> {payroll.name}</p>
                   <p><strong>Position:</strong> {payroll.position}</p>
                   <hr />
-                  <p><strong>Salary:</strong> {formatCurrency(payroll.salary)}</p>
-                  <p><strong>Deductions:</strong> {formatCurrency(payroll.deductions)}</p>
-                  <p><strong>Days Worked:</strong> {payroll.days_worked}</p>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
+                    <thead>
+                      <tr>
+                        <th style={{ borderBottom: '1px solid #ddd', textAlign: 'left', padding: '5px' }}>Category</th>
+                        <th style={{ borderBottom: '1px solid #ddd', textAlign: 'right', padding: '5px' }}>Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style={{ padding: '5px' }}>Base Salary</td>
+                        <td style={{ padding: '5px', textAlign: 'right' }}>{formatCurrency(payroll.salary)}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ padding: '5px' }}>Days Worked</td>
+                        <td style={{ padding: '5px', textAlign: 'right' }}>{payroll.days_worked}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ padding: '5px' }}>Overtime Pay</td>
+                        <td style={{ padding: '5px', textAlign: 'right' }}>{payroll.overtime}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ padding: '5px', fontWeight: 'bold' }}>Gross Pay</td>
+                        <td style={{ padding: '5px', textAlign: 'right', fontWeight: 'bold' }}>
+                          {formatCurrency(payroll.gross_salary)}
+                        </td>
+                      </tr>
+      
+                      <tr>
+                        <td style={{ padding: '5px' }}>SSS</td>
+                        <td style={{ padding: '5px', textAlign: 'right' }}>{formatCurrency(payroll.sss)}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ padding: '5px' }}>Pag-IBIG</td>
+                        <td style={{ padding: '5px', textAlign: 'right' }}>{formatCurrency(payroll.pag_ibig)}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ padding: '5px' }}>PhilHealth</td>
+                        <td style={{ padding: '5px', textAlign: 'right' }}>{formatCurrency(payroll.phil_health)}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ padding: '5px', fontWeight: 'bold' }}>Total Deductions</td>
+                        <td style={{ padding: '5px', textAlign: 'right', fontWeight: 'bold' }}>
+                          {formatCurrency(payroll.deductions)}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                   <hr />
-                  <p><strong>Total Salary:</strong> {formatCurrency(payroll.total_salary)}</p>
+                  <p style={{ fontWeight: 'bold', textAlign: 'right' }}>
+                    Net Pay: {formatCurrency(payroll.total_salary)}
+                  </p>
                   <hr />
-                  <p style={{ textAlign: 'center', marginTop: '20px' }}>Sahod NAA!</p>
+                  <p style={{ textAlign: 'center', marginTop: '20px', fontStyle: 'italic' }}>Sahod NAA!</p>
                 </div>
               </div>
             </React.Fragment>

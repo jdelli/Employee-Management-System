@@ -32,7 +32,9 @@ class EmployeeApiController extends Controller
             'department' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'salary' => 'required|numeric', 
-            'deductions' => 'required|numeric', 
+            'sss' => 'required|numeric',
+            'pag_ibig' => 'required|numeric', 
+            'phil_health' => 'required|numeric', 
             'email' => 'required|string|email|max:255|unique:employees,email', 
             'hire_date' => 'required|date',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
@@ -200,4 +202,29 @@ class EmployeeApiController extends Controller
         $employeeCount = $this->employeeModel->where('department', 'Marketing')->count();
         return response()->json(['totalMarketing' => $employeeCount], 200);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function getEmployeeById($id)
+{
+    $employee = Employees::where('employee_id', $id)->first();
+
+    if (!$employee) {
+        return response()->json(['error' => 'Employee not found'], 404);
+    }
+
+    return response()->json(['employee' => $employee], 200);
+}
+
 }

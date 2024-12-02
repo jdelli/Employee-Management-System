@@ -10,22 +10,25 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('employees', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('employee_id');
-            $table->string('name');
-            $table->string('position');
-            $table->string('department');
-            $table->string('address');
-            $table->unsignedBigInteger('salary');
-            $table->unsignedBigInteger('deductions');
-            $table->string('email');
-            $table->date('hire_date');
-            $table->string('photo')->nullable();
-            $table->timestamps();
-        });
-    }
+{
+    Schema::create('employees', function (Blueprint $table) {
+        $table->bigIncrements('id');
+        $table->string('employee_id');
+        $table->string('name');
+        $table->string('position');
+        $table->string('department');
+        $table->string('address');
+        $table->unsignedBigInteger('salary');
+        $table->unsignedBigInteger('sss');
+        $table->unsignedBigInteger('pag_ibig');
+        $table->unsignedBigInteger('phil_health');
+        $table->string('email');
+        $table->date('hire_date');
+        $table->string('photo')->nullable();
+        $table->timestamps();
+    });
+}
+
 
     /**
      * Reverse the migrations.

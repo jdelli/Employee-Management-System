@@ -8,7 +8,9 @@ const EmployeeModalAdd = ({ isOpen, onClose, refreshEmployees }) => {
     const [department, setDepartment] = useState("");
     const [address, setAddress] = useState("");
     const [salary, setSalary] = useState("");
-    const [deductions, setDeductions] = useState("");
+    const [sss, setSSS] = useState("");
+    const [pagibig, setPagibig] = useState("");
+    const [philhealth, setPhilhealth] = useState("");
     const [email, setEmail] = useState("");
     const [hire_date, setHireDate] = useState("");
     const [photo, setPhoto] = useState(null);
@@ -20,42 +22,47 @@ const EmployeeModalAdd = ({ isOpen, onClose, refreshEmployees }) => {
         setPhoto(e.target.files[0]);
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+   const handleSubmit = (e) => {
+    e.preventDefault();
 
-        const formData = new FormData();
-        formData.append("employee_id", employee_id);
-        formData.append("name", name);
-        formData.append("position", position);
-        formData.append("department", department);
-        formData.append("address", address);
-        formData.append("salary", salary);
-        formData.append("deductions", deductions);
-        formData.append("email", email);
-        formData.append("hire_date", hire_date);
-        if (photo) formData.append("photo", photo);
+    const formData = new FormData();
+    formData.append("employee_id", employee_id);
+    formData.append("name", name);
+    formData.append("position", position);
+    formData.append("department", department);
+    formData.append("address", address);
+    formData.append("salary", salary);
+    formData.append("sss", sss);
+    formData.append("pag_ibig", pagibig);
+    formData.append("phil_health", philhealth);
+    formData.append("email", email);
+    formData.append("hire_date", hire_date);
 
-        apiService.post("saves", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        })
-        .then((response) => {
-            console.log(response.data);
-            refreshEmployees();
-            onClose();
-            resetForm();
-        })
-        .catch((error) => {
-            if (error.response && error.response.status === 422) {
-                const errors = error.response.data.errors;
-                const errorMessages = Object.values(errors).flat().join(", ");
-                setErrorMessage(errorMessages);
-            } else {
-                setErrorMessage("An unexpected error occurred.");
-            }
-        });
-    };
+    
+
+    if (photo) formData.append("photo", photo);
+
+    apiService.post("saves", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    })
+    .then(() => {
+        refreshEmployees();
+        onClose();
+        resetForm();
+    })
+    .catch((error) => {
+        if (error.response && error.response.status === 422) {
+            const errors = error.response.data.errors;
+            const errorMessages = Object.values(errors).flat().join(", ");
+            setErrorMessage(errorMessages);
+        } else {
+            setErrorMessage("An unexpected error occurred.");
+        }
+    });
+};
+
 
     const resetForm = () => {
         setEmployeeId("");
@@ -64,7 +71,9 @@ const EmployeeModalAdd = ({ isOpen, onClose, refreshEmployees }) => {
         setDepartment("");
         setAddress("");
         setSalary("");
-        setDeductions("");
+        setSSS("");
+        setPagibig("");
+        setPhilhealth("");
         setEmail("");
         setHireDate("");
         setPhoto(null);
@@ -92,11 +101,11 @@ const EmployeeModalAdd = ({ isOpen, onClose, refreshEmployees }) => {
                     )}
 
                     <div className="grid grid-cols-2 gap-4 mb-4">
+                        {/* Employee Fields */}
                         <div>
                             <label className="block text-gray-700">Employee ID</label>
                             <input
                                 type="text"
-                                name="employee_id"
                                 value={employee_id}
                                 onChange={(e) => setEmployeeId(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
@@ -107,7 +116,6 @@ const EmployeeModalAdd = ({ isOpen, onClose, refreshEmployees }) => {
                             <label className="block text-gray-700">Name</label>
                             <input
                                 type="text"
-                                name="name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
@@ -118,7 +126,6 @@ const EmployeeModalAdd = ({ isOpen, onClose, refreshEmployees }) => {
                             <label className="block text-gray-700">Position</label>
                             <input
                                 type="text"
-                                name="position"
                                 value={position}
                                 onChange={(e) => setPosition(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
@@ -141,11 +148,11 @@ const EmployeeModalAdd = ({ isOpen, onClose, refreshEmployees }) => {
                                 ))}
                             </select>
                         </div>
+                        {/* Address */}
                         <div>
                             <label className="block text-gray-700">Address</label>
                             <input
                                 type="text"
-                                name="address"
                                 value={address}
                                 onChange={(e) => setAddress(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
@@ -156,20 +163,39 @@ const EmployeeModalAdd = ({ isOpen, onClose, refreshEmployees }) => {
                             <label className="block text-gray-700">Salary</label>
                             <input
                                 type="number"
-                                name="salary"
                                 value={salary}
                                 onChange={(e) => setSalary(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
                                 required
                             />
                         </div>
+                        {/* Deductions */}
                         <div>
-                            <label className="block text-gray-700">Deductions</label>
+                            <label className="block text-gray-700">SSS</label>
                             <input
                                 type="number"
-                                name="deductions"
-                                value={deductions}
-                                onChange={(e) => setDeductions(e.target.value)}
+                                value={sss}
+                                onChange={(e) => setSSS(e.target.value)}
+                                className="mt-1 block w-full border border-gray-300 rounded p-2"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">Pag-IBIG</label>
+                            <input
+                                type="number"
+                                value={pagibig}
+                                onChange={(e) => setPagibig(e.target.value)}
+                                className="mt-1 block w-full border border-gray-300 rounded p-2"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">PhilHealth</label>
+                            <input
+                                type="number"
+                                value={philhealth}
+                                onChange={(e) => setPhilhealth(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
                                 required
                             />
@@ -178,7 +204,6 @@ const EmployeeModalAdd = ({ isOpen, onClose, refreshEmployees }) => {
                             <label className="block text-gray-700">Email</label>
                             <input
                                 type="email"
-                                name="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
@@ -189,18 +214,17 @@ const EmployeeModalAdd = ({ isOpen, onClose, refreshEmployees }) => {
                             <label className="block text-gray-700">Hire Date</label>
                             <input
                                 type="date"
-                                name="hire_date"
                                 value={hire_date}
                                 onChange={(e) => setHireDate(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
                                 required
                             />
                         </div>
+                        {/* File Upload */}
                         <div>
                             <label className="block text-gray-700">Photo</label>
                             <input
                                 type="file"
-                                name="photo"
                                 onChange={handleFileChange}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
                             />

@@ -18,6 +18,10 @@ return new class extends Migration
             $table->string('position');
             $table->string('department');
             $table->unsignedBigInteger('salary');
+            $table->unsignedBigInteger('gross_salary');
+            $table->unsignedBigInteger('sss');
+            $table->unsignedBigInteger('pag_ibig');
+            $table->unsignedBigInteger('phil_health');
             $table->unsignedBigInteger('deductions');
             $table->string('days_worked');
             $table->string('total_salary');

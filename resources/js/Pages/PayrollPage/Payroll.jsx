@@ -4,18 +4,18 @@ import { Head } from '@inertiajs/react';
 import PayrollTable from './PendingPayroll';
 import PayrollTableComplete from './CompletedPayroll';
 
+
 const TabsComponent = ({ auth }) => {
     const [activeTab, setActiveTab] = useState('tab1');
 
+    const tabs = [
+        { id: 'tab1', label: 'Pending Payrolls', component: <PayrollTable /> },
+        { id: 'tab2', label: 'Completed Payrolls', component: <PayrollTableComplete /> },
+    ];
+
     const renderContent = () => {
-        switch (activeTab) {
-            case 'tab1':
-                return <div><PayrollTable /></div>;
-            case 'tab2':
-                return <div><PayrollTableComplete /></div>;
-            default:
-                return null;
-        }
+        const activeTabData = tabs.find(tab => tab.id === activeTab);
+        return activeTabData ? activeTabData.component : <p>Invalid tab selection.</p>;
     };
 
     return (
@@ -27,22 +27,24 @@ const TabsComponent = ({ auth }) => {
                 </h2>
             }
         >
-        <Head title="Payroll" />
+            <Head title="Payroll" />
             <div>
                 <div className="flex border-b border-gray-300">
-                    <button
-                        onClick={() => setActiveTab('tab1')}
-                        className={`px-4 py-2 ${activeTab === 'tab1' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
-                    >
-                        Pending Payrolls
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('tab2')}
-                        className={`px-4 py-2 ${activeTab === 'tab2' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
-                    >
-                        Completed
-                    </button>
-                    
+                    {tabs.map(tab => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`px-4 py-2 focus:outline-none ${
+                                activeTab === tab.id
+                                    ? 'border-b-2 border-blue-500 text-blue-500'
+                                    : 'text-gray-500 hover:text-blue-500'
+                            }`}
+                            role="tab"
+                            aria-selected={activeTab === tab.id}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
                 </div>
 
                 <div className="mt-4">

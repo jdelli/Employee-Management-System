@@ -33,6 +33,12 @@ Route::get('/payroll', function () {
 
 
 
+Route::get('/test', function () {
+    return Inertia::render('Test');
+});
+
+
+
 
 
 

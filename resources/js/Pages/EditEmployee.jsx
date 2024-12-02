@@ -11,6 +11,9 @@ const EmployeeModalEdit = ({ isOpen, onClose, refreshEmployees, editingEmployee 
     const [deductions, setDeductions] = useState("");
     const [email, setEmail] = useState("");
     const [hire_date, setHireDate] = useState("");
+    const [sss, setSSS] = useState(""); // Declare state for SSS
+    const [pag_ibig, setPagibig] = useState(""); // Declare state for Pag-IBIG
+    const [phil_health, setPhilhealth] = useState(""); // Declare state for PhilHealth
     const [errorMessage, setErrorMessage] = useState("");
     const [photo, setPhoto] = useState(null);
 
@@ -27,6 +30,9 @@ const EmployeeModalEdit = ({ isOpen, onClose, refreshEmployees, editingEmployee 
             setDeductions(editingEmployee.deductions);
             setEmail(editingEmployee.email);
             setHireDate(editingEmployee.hire_date);
+            setSSS(editingEmployee.sss || ""); // Set SSS, Pag-IBIG, PhilHealth if available
+            setPagibig(editingEmployee.pag_ibig || "");
+            setPhilhealth(editingEmployee.phil_health || "");
         }
     }, [editingEmployee]);
 
@@ -48,6 +54,9 @@ const EmployeeModalEdit = ({ isOpen, onClose, refreshEmployees, editingEmployee 
                 deductions,
                 email,
                 hire_date,
+                sss,
+                pag_ibig,
+                phil_health,
             });
 
             if (photo) {
@@ -82,21 +91,24 @@ const EmployeeModalEdit = ({ isOpen, onClose, refreshEmployees, editingEmployee 
     };
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-60">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
             <div className="bg-white p-6 rounded shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-                <h3 className="text-xl font-semibold mb-4">Edit Employee</h3>
+                <h3 className="text-xl font-semibold mb-4">
+                    Add Employee
+                </h3>
                 <form onSubmit={handleSubmit}>
                     {errorMessage && (
                         <div className="mb-4 text-red-500">
                             {errorMessage}
                         </div>
                     )}
+
                     <div className="grid grid-cols-2 gap-4 mb-4">
+                        {/* Employee Fields */}
                         <div>
                             <label className="block text-gray-700">Employee ID</label>
                             <input
                                 type="text"
-                                name="employee_id"
                                 value={employee_id}
                                 onChange={(e) => setEmployeeId(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
@@ -107,7 +119,6 @@ const EmployeeModalEdit = ({ isOpen, onClose, refreshEmployees, editingEmployee 
                             <label className="block text-gray-700">Name</label>
                             <input
                                 type="text"
-                                name="name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
@@ -118,7 +129,6 @@ const EmployeeModalEdit = ({ isOpen, onClose, refreshEmployees, editingEmployee 
                             <label className="block text-gray-700">Position</label>
                             <input
                                 type="text"
-                                name="position"
                                 value={position}
                                 onChange={(e) => setPosition(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
@@ -131,6 +141,7 @@ const EmployeeModalEdit = ({ isOpen, onClose, refreshEmployees, editingEmployee 
                                 value={department}
                                 onChange={(e) => setDepartment(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
+                                required
                             >
                                 <option value="">Select a department</option>
                                 {departmentOptions.map((option, index) => (
@@ -140,11 +151,11 @@ const EmployeeModalEdit = ({ isOpen, onClose, refreshEmployees, editingEmployee 
                                 ))}
                             </select>
                         </div>
+                        {/* Address */}
                         <div>
                             <label className="block text-gray-700">Address</label>
                             <input
                                 type="text"
-                                name="address"
                                 value={address}
                                 onChange={(e) => setAddress(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
@@ -155,20 +166,39 @@ const EmployeeModalEdit = ({ isOpen, onClose, refreshEmployees, editingEmployee 
                             <label className="block text-gray-700">Salary</label>
                             <input
                                 type="number"
-                                name="salary"
                                 value={salary}
                                 onChange={(e) => setSalary(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
                                 required
                             />
                         </div>
+                        {/* Deductions */}
                         <div>
-                            <label className="block text-gray-700">Deductions</label>
+                            <label className="block text-gray-700">SSS</label>
                             <input
                                 type="number"
-                                name="deductions"
-                                value={deductions}
-                                onChange={(e) => setDeductions(e.target.value)}
+                                value={sss}
+                                onChange={(e) => setSSS(e.target.value)}
+                                className="mt-1 block w-full border border-gray-300 rounded p-2"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">Pag-IBIG</label>
+                            <input
+                                type="number"
+                                value={pag_ibig}
+                                onChange={(e) => setPagibig(e.target.value)}
+                                className="mt-1 block w-full border border-gray-300 rounded p-2"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">PhilHealth</label>
+                            <input
+                                type="number"
+                                value={phil_health}
+                                onChange={(e) => setPhilhealth(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
                                 required
                             />
@@ -177,7 +207,6 @@ const EmployeeModalEdit = ({ isOpen, onClose, refreshEmployees, editingEmployee 
                             <label className="block text-gray-700">Email</label>
                             <input
                                 type="email"
-                                name="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
@@ -188,23 +217,23 @@ const EmployeeModalEdit = ({ isOpen, onClose, refreshEmployees, editingEmployee 
                             <label className="block text-gray-700">Hire Date</label>
                             <input
                                 type="date"
-                                name="hire_date"
                                 value={hire_date}
                                 onChange={(e) => setHireDate(e.target.value)}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
                                 required
                             />
                         </div>
+                        {/* File Upload */}
                         <div>
                             <label className="block text-gray-700">Photo</label>
                             <input
                                 type="file"
-                                name="photo"
                                 onChange={handlePhotoChange}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
                             />
                         </div>
                     </div>
+
                     <div className="flex justify-end mt-4">
                         <button
                             type="button"
@@ -217,7 +246,7 @@ const EmployeeModalEdit = ({ isOpen, onClose, refreshEmployees, editingEmployee 
                             type="submit"
                             className="bg-blue-500 text-white px-4 py-2 rounded"
                         >
-                            Update
+                            Save
                         </button>
                     </div>
                 </form>

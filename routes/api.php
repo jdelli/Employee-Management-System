@@ -32,8 +32,6 @@ Route::get("/countMarketing", [EmployeeApiController::class, "countMarketing"]);
 
 
 
-
-
 //Payroll
 Route::post("/payroll", [PayrollApiController::class, "getPayroll"]);
 Route::get("/uncompleted-payrolls", [PayrollApiController::class, "getAllPayrollsUncompleted"]);
@@ -52,3 +50,11 @@ Route::get("/count-pending-payroll", [PayrollApiController::class, "getPendingPa
 
 //Check if payroll is incomplete
 Route::get('check-incomplete-payroll/{employeeId}', [PayrollApiController::class, 'checkIncompletePayroll']);
+
+
+
+
+
+////////
+Route::get('/employees/{id}', [EmployeeApiController::class, 'getEmployeeById']);
+
