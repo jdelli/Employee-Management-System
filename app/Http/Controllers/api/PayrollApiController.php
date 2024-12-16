@@ -162,4 +162,52 @@ class PayrollApiController extends Controller
 
         return response()->json(['hasIncompletePayroll' => $hasIncompletePayroll]);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //for users
+
+ public function getAllPayrollsCompletedUsers(Request $request)
+{
+    $month = $request->input('month', date('m'));
+    $year = $request->input('year', date('Y'));
+    $departments = $request->input('department', 'all');
+    $userName = $request->input('user_name'); // Input for user name
+
+    $query = Payroll::where('completed', true)
+        ->whereYear('created_at', $year)
+        ->whereMonth('created_at', $month);
+
+    if ($departments !== 'all') {
+        $query->where('department', $departments);
+    }
+
+    if ($userName) {
+        $query->whereHas('user', function ($q) use ($userName) {
+            $q->where('name', $userName);
+        });
+    }
+
+    $payrolls = $query->paginate(10);
+
+    return response()->json([
+        'message' => 'Payrolls for the selected month retrieved successfully',
+        'payrolls' => $payrolls->items(),
+        'current_page' => $payrolls->currentPage(),
+        'last_page' => $payrolls->lastPage(),
+        'total' => $payrolls->total(),
+    ], 200);
+}
+
+
 }

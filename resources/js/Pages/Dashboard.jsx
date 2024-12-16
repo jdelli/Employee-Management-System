@@ -57,7 +57,7 @@ const Dashboard = ({ auth }) => {
   return (
     <AuthenticatedLayout
       user={auth.user}
-      header={<h2 className="font-semibold text-2xl text-gray-800 leading-tight">Dashboard</h2>}
+      header={<h2 className="font-semibold text-2xl text-gray-800 leading-tight">Admin Dashboard</h2>}
     >
       <Head title="Dashboard" />
 

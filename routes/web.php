@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -16,26 +17,40 @@ Route::get('/', function () {
 
 
 
+Route::middleware(['checkrole:user'])->group(function () {
+    // User routes
+    Route::get('/user-dashboard', function () {
+        return Inertia::render('EmployeeRoutePage/EmployeeDashboard');
+    })->name('user-dashboard');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/user-payroll', function () {
+        return Inertia::render('EmployeeRoutePage/EmployeePayroll');
+    })->name('user-payroll');
 
-
-Route::get('/employees', function () {
-    return Inertia::render('Employees');
-})->middleware(['auth', 'verified'])->name('employees');
-
-
-Route::get('/payroll', function () {
-    return Inertia::render('PayrollPage/Payroll');
-})->middleware(['auth', 'verified'])->name('payroll');
-
-
-
-Route::get('/test', function () {
-    return Inertia::render('Test');
+    Route::get('/user-leave', function () {
+        return Inertia::render('EmployeeRoutePage/EmployeeLeave');
+    })->name('user-leave');
 });
+
+
+
+
+Route::middleware(['checkrole:admin'])->group(function () {
+    Route::get('/admin-dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
+
+    Route::get('/admin-employees', function () {
+        return Inertia::render('Employees');
+    })->name('employees');
+
+    Route::get('/admin-payroll', function () {
+        return Inertia::render('PayrollPage/Payroll');
+    })->name('payroll');
+});
+
+
+
 
 
 

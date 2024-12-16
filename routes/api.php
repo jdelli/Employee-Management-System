@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\EmployeeApiController;
 use App\Http\Controllers\Api\PayrollApiController;
+use App\Http\Controllers\Api\EmployeeLeaveController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -57,4 +58,17 @@ Route::get('check-incomplete-payroll/{employeeId}', [PayrollApiController::class
 
 ////////
 Route::get('/employees/{id}', [EmployeeApiController::class, 'getEmployeeById']);
+
+
+
+
+//users
+Route::get('/users-get-payroll', [payrollApiController::class, 'getAllPayrollsCompletedUsers']);
+
+
+
+
+// Add employee leave (secured)
+Route::post('/users-add-leave', [EmployeeLeaveController::class, 'addEmployeeLeave']);
+Route::get('/user-leaves', [EmployeeLeaveController::class, 'getEmployeeLeaves']);
 

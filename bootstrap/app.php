@@ -12,13 +12,23 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Registering the 'admin' alias for CheckRole middleware
+        $middleware->alias([
+            'checkrole' => \App\Http\Middleware\CheckRole::class,
+        ]);
+
+        // Adding Sanctum middleware for API
+        $middleware->api(append: [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
+
+        // Adding other middleware for the web group
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
-
-        //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })->create();
+        // Handle custom exceptions if needed
+    })
+    ->create();
