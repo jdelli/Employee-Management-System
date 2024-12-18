@@ -71,4 +71,9 @@ Route::get('/users-get-payroll', [payrollApiController::class, 'getAllPayrollsCo
 // Add employee leave (secured)
 Route::post('/users-add-leave', [EmployeeLeaveController::class, 'addEmployeeLeave']);
 Route::get('/user-leaves', [EmployeeLeaveController::class, 'getEmployeeLeaves']);
+// Accept or reject employee leave
+Route::put('/employee-leaves/{id}/accept', [EmployeeLeaveController::class, 'acceptLeave']);
+Route::put('/employee-leaves/{id}/reject', [EmployeeLeaveController::class, 'rejectLeave']);
 
+
+Route::get('/get-all-employee-leaves', [EmployeeLeaveController::class, 'fetchEmployeeLeaves']);

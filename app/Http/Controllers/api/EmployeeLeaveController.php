@@ -63,4 +63,40 @@ public function getEmployeeLeaves(Request $request)
 
 
 
+
+
+
+
+    public function fetchEmployeeLeaves()
+    {
+        // Fetch all employee leave data, possibly including user relationship
+        $leaves = EmployeeLeave::all();
+        // Return the data as JSON
+        return response()->json($leaves, 200);
+    }
+
+
+
+
+    public function acceptLeave($id)
+    {
+        $leave = EmployeeLeave::findOrFail($id);
+        $leave->status = 1;
+        $leave->save();
+
+        return response()->json(200);
+    }
+
+    public function rejectLeave($id)
+    {
+        $leave = EmployeeLeave::findOrFail($id);
+        $leave->status = -1;
+        $leave->save();
+
+        return response()->json(200);
+    }
+
+
+
+
 }
