@@ -5,10 +5,22 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\EmployeeApiController;
 use App\Http\Controllers\Api\PayrollApiController;
 use App\Http\Controllers\Api\EmployeeLeaveController;
+use App\Http\Controllers\Api\AttendanceController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+
+
+
+Route::middleware('auth:sanctum')->post('/tokens/create', function (Request $request) {
+    // Create a new token for the authenticated user
+    $token = $request->user()->createToken($request->token_name);
+    
+    // Return the plain-text token
+    return ['token' => $token->plainTextToken];
+});
 
 
 
@@ -47,8 +59,6 @@ Route::get("/count-pending-payroll", [PayrollApiController::class, "getPendingPa
 
 
 
-
-
 //Check if payroll is incomplete
 Route::get('check-incomplete-payroll/{employeeId}', [PayrollApiController::class, 'checkIncompletePayroll']);
 
@@ -77,3 +87,18 @@ Route::put('/employee-leaves/{id}/reject', [EmployeeLeaveController::class, 'rej
 
 
 Route::get('/get-all-employee-leaves', [EmployeeLeaveController::class, 'fetchEmployeeLeaves']);
+
+
+
+
+
+//attendance
+Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn']);
+Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut']);
+Route::get('/attendance/{employee_id}', [AttendanceController::class, 'getEmployeeAttendance']);
+Route::post('/attendance/reset', [AttendanceController::class, 'resetAttendance']);
+
+
+
+Route::get('/employees', [EmployeeApiController::class, 'getAllEmployees']);
+Route::get('/attendance/{employee_id}', [AttendanceController::class, 'getEmployeeAttendanceList']);

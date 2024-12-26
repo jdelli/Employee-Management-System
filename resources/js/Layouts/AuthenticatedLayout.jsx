@@ -34,6 +34,9 @@ export default function Authenticated({ user, header, children }) {
                                 <NavLink href={route('leave')} active={route().current('leave')}>
                                     Employee Leave
                                 </NavLink>
+                                <NavLink href={route('attendance')} active={route().current('attendance')}>
+                                    Employee Attendance List
+                                </NavLink>
                             </div>
                         </div>
 

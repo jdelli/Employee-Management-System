@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -33,6 +34,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
+
+        $token = $request->user()->createToken('token-name')->plainTextToken;
+        
+        $authUser=[
+            'user' => $user,
+            'token' => $token
+        ];
+
         if($request->user()->usertype === 'admin') {
             return redirect('admin-dashboard');
         }
@@ -50,6 +60,8 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+        
+        
 
         return redirect('/');
     }

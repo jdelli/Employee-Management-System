@@ -51,6 +51,10 @@ Route::middleware(['checkrole:admin'])->group(function () {
     Route::get('/admin-leave', function () {
         return Inertia::render('EmployeeLeaveAproval');
     })->name('leave');
+
+    Route::get('/admin-attendance', function () {
+        return Inertia::render('EmployeeAttendanceList');
+    })->name('attendance');
 });
 
 

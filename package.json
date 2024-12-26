@@ -21,7 +21,10 @@
     },
     "dependencies": {
         "chart.js": "^4.4.4",
+        "moment-timezone": "^0.5.46",
         "react-chartjs-2": "^5.2.0",
+        "react-clock": "^5.1.0",
+        "react-webcam": "^7.2.0",
         "recharts": "^2.12.7",
         "ziggy-js": "^2.4.1"
     }
