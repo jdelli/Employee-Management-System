@@ -99,25 +99,37 @@ class AttendanceController extends Controller
 
 
 
-// Fetch all employees' clock in and clock out records based on their name
-public function getEmployeeAttendanceList($name)
-{
-    // Fetch attendance records where the name matches
-    $attendance = Attendance::where('name', $name)->get();
+    // Fetch all employees' clock in and clock out records based on their name and optional month
+    public function getEmployeeAttendanceList($name, Request $request)
+    {
+        $month = $request->query('month');
+        $year = $request->query('year');
 
-    // Check if attendance records exist
-    if ($attendance->isEmpty()) {
-        return response()->json(['message' => 'No attendance records found.'], 404);
+        $attendanceQuery = Attendance::where('name', $name);
+
+        if ($month) {
+            $attendanceQuery->whereMonth('clock_in', $month);
+        }
+
+        if ($year) {
+            $attendanceQuery->whereYear('clock_in', $year);
+        }
+
+        $attendance = $attendanceQuery->get();
+
+        // Check if attendance records exist
+        if ($attendance->isEmpty()) {
+            return response()->json(['message' => 'No attendance records found.'], 404);
+        }
+
+        return response()->json(['attendance' => $attendance]);
     }
-
-    return response()->json(['attendance' => $attendance]);
-}
-// List all employees
-public function listEmployees()
-{
-    $employees = User::select('name')->get();
-    return response()->json(['employees' => $employees]);
-}
+    // List all employees
+    public function listEmployees()
+    {
+        $employees = User::select('name')->get();
+        return response()->json(['employees' => $employees]);
+    }
 
 
 

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Payroll;
 use App\Models\Employees;
+use Carbon\Carbon;
+use App\Models\Attendance;
 
 class PayrollApiController extends Controller
 {
@@ -167,14 +169,6 @@ class PayrollApiController extends Controller
 
 
 
-
-
-
-
-
-
-
-
     //for users
 
  public function getAllPayrollsCompletedUsers(Request $request)
@@ -208,6 +202,45 @@ class PayrollApiController extends Controller
         'total' => $payrolls->total(),
     ], 200);
 }
+
+
+
+
+
+
+
+
+
+public function getDaysWorked(Request $request)
+    {
+        // Validate input
+        $request->validate([
+            'employee_name' => 'required|exists:users,name',
+            'from' => 'required|date',
+            'to' => 'required|date|after_or_equal:from',
+        ]);
+
+        $employeeName = $request->input('employee_name');
+        $from = Carbon::parse($request->input('from'));
+        $to = Carbon::parse($request->input('to'));
+
+        // Fetch attendance records within the date range
+        $attendances = Attendance::whereHas('employee', function ($query) use ($employeeName) {
+            $query->where('name', $employeeName);
+        })
+        ->whereBetween('clock_in', [$from, $to])
+        ->get();
+
+        // Calculate days worked
+        $daysWorked = $attendances->count();
+
+        return response()->json([
+            'employee_name' => $employeeName,
+            'days_worked' => $daysWorked,
+            'from' => $from->toDateString(),
+            'to' => $to->toDateString(),
+        ]);
+    }
 
 
 }

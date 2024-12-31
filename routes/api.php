@@ -102,3 +102,8 @@ Route::post('/attendance/reset', [AttendanceController::class, 'resetAttendance'
 
 Route::get('/employees', [AttendanceController::class, 'listEmployees']);
 Route::get('/employee-attendance/{name}', [AttendanceController::class, 'getEmployeeAttendanceList']);
+
+
+
+
+Route::get('/employee/days-worked', [PayrollApiController::class, 'getDaysWorked']);

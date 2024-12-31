@@ -12,7 +12,7 @@ const formatCurrency = (value) => {
 };
 
 const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
-    const [employeeId, setEmployeeId] = useState("");
+    const [employeeName, setEmployeeName] = useState("");
     const [name, setName] = useState("");
     const [position, setPosition] = useState("");
     const [department, setDepartment] = useState("");
@@ -41,47 +41,9 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
             .catch((error) => console.error("Error fetching data:", error));
     }, []);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const { hasIncompletePayroll } = await apiService2.checkIncompletePayroll(employeeId);
-
-            if (hasIncompletePayroll) {
-                setError("Employee already has an incomplete payroll entry.");
-                return;
-            }
-
-            await apiService.post("payroll", {
-                employee_id: employeeId,
-                name,
-                position,
-                department,
-                salary: basicPay,
-                overtime,
-                gross_salary: basicPay * daysWorked + overtime,
-                sss: deductions.sss,
-                pag_ibig: deductions.pagIbig,
-                phil_health: deductions.philHealth,
-                deductions: Object.values(deductions).reduce((a, b) => a + b, 0),
-                days_worked: daysWorked,
-                total_salary: totalSalary,
-                payroll_from_date: payrollFromDate,
-                payroll_to_date: payrollToDate,
-            });
-            onClose();
-        } catch (error) {
-            setError("Error adding payroll.");
-        }
-    };
-
-    const handleCancel = () => {
-        onClose();
-        setError("");
-    };
-
     useEffect(() => {
         if (payroll) {
-            setEmployeeId(payroll.employee_id);
+            setEmployeeName(payroll.name);
             setName(payroll.name);
             setPosition(payroll.position);
             setDepartment(payroll.department);
@@ -110,6 +72,69 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
         setTotalSalary(isNaN(computedTotalSalary) ? 0 : computedTotalSalary);
     }, [basicPay, overtime, deductions, daysWorked]);
 
+    useEffect(() => {
+        if (employeeName && payrollFromDate && payrollToDate) {
+            apiService.get(`/employee/days-worked`, {
+                params: {
+                    employee_name: employeeName,
+                    from: payrollFromDate,
+                    to: payrollToDate,
+                },
+            })
+                .then((response) => {
+                    setDaysWorked(response.data.days_worked);
+                })
+                .catch((error) => {
+                    console.error("Error fetching days worked:", error);
+                });
+        }
+    }, [employeeName, payrollFromDate, payrollToDate]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const { hasIncompletePayroll } = await apiService2.checkIncompletePayroll(employeeName);
+
+            if (hasIncompletePayroll) {
+                setError("Employee already has an incomplete payroll entry.");
+                return;
+            }
+
+            await apiService.post("payroll", {
+                employee_id: employeeName,
+                employee_name: employeeName, // Ensure this field is included
+                name,
+                position,
+                department,
+                salary: basicPay,
+                overtime,
+                gross_salary: basicPay * daysWorked + overtime,
+                sss: deductions.sss,
+                pag_ibig: deductions.pagIbig,
+                phil_health: deductions.philHealth,
+                deductions: Object.values(deductions).reduce((a, b) => a + b, 0),
+                days_worked: daysWorked,
+                total_salary: totalSalary,
+                payroll_from_date: payrollFromDate,
+                payroll_to_date: payrollToDate,
+            });
+            onClose();
+        } catch (error) {
+            setError("Error adding payroll.");
+        }
+    };
+
+    const handleCancel = () => {
+        onClose();
+        setError("");
+        setOvertime(0);
+        setDaysWorked(0);
+        setTotalSalary(0);
+        setPayrollFromDate("");
+        setPayrollToDate("");
+        
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -120,10 +145,10 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <div>
-                            <label className="block text-gray-700">Employee ID</label>
+                            <label className="block text-gray-700">Employee Name</label>
                             <input
                                 type="text"
-                                value={employeeId}
+                                value={employeeName}
                                 readOnly
                                 className="mt-1 block w-full border border-gray-300 rounded p-2 bg-gray-100"
                             />
@@ -199,6 +224,7 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
                             <input
                                 type="number"
                                 value={daysWorked || ''}
+                                readOnly
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     setDaysWorked(value === '' ? '' : Number(value));
