@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('employee_id');
+
+            $table->string('name');
             $table->dateTime('clock_in')->nullable();
             $table->dateTime('clock_out')->nullable();
             $table->timestamps();
-            $table->foreign('employee_id')->references('id')->on('users')->onDelete('cascade');
+            
             $table->string('clock_in_image')->nullable(); // Path to the clock-in image
             $table->string('clock_out_image')->nullable(); // Path to the clock-out image
 

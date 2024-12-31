@@ -9,6 +9,7 @@ const AttendanceList = ({ auth }) => {
     const [attendance, setAttendance] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     // Fetch the list of employees
     useEffect(() => {
@@ -28,16 +29,16 @@ const AttendanceList = ({ auth }) => {
     }, []);
 
     // Fetch attendance data for the selected employee
-    const handleEmployeeSelect = async (employeeId) => {
-        setSelectedEmployee(employeeId);
+    const handleEmployeeSelect = async (employeeName) => {
+        setSelectedEmployee(employeeName);
         setAttendance([]);
         setLoading(true);
         setError(null);
 
         try {
-            const response = await apiService.get(`/attendance/${employeeId}`);
+            const response = await apiService.get(`/employee-attendance/${employeeName}`);
             setAttendance(
-                Array.isArray(response.data) ? response.data : response.data.attendance || []
+                Array.isArray(response.data.attendance) ? response.data.attendance : []
             );
         } catch (err) {
             console.error("Error fetching attendance:", err.response?.data || err.message);
@@ -45,6 +46,14 @@ const AttendanceList = ({ auth }) => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleImageClick = (imageSrc) => {
+        setSelectedImage(imageSrc);
+    };
+
+    const closeImageViewer = () => {
+        setSelectedImage(null);
     };
 
     const formatDateTime = (date) => {
@@ -74,7 +83,7 @@ const AttendanceList = ({ auth }) => {
                 >
                     <option value="">-- Select an Employee --</option>
                     {employees.map((employee) => (
-                        <option key={employee.id} value={employee.id}>
+                        <option key={employee.name} value={employee.name}>
                             {employee.name}
                         </option>
                     ))}
@@ -111,7 +120,8 @@ const AttendanceList = ({ auth }) => {
                                         <img
                                             src={`/storage/${record.clock_in_image}`}
                                             alt="Clock In"
-                                            className="w-16 h-16 object-cover rounded-md"
+                                            className="w-16 h-16 object-cover rounded-md cursor-pointer"
+                                            onClick={() => handleImageClick(`/storage/${record.clock_in_image}`)}
                                         />
                                     )}
                                 </td>
@@ -120,7 +130,8 @@ const AttendanceList = ({ auth }) => {
                                         <img
                                             src={`/storage/${record.clock_out_image}`}
                                             alt="Clock Out"
-                                            className="w-16 h-16 object-cover rounded-md"
+                                            className="w-16 h-16 object-cover rounded-md cursor-pointer"
+                                            onClick={() => handleImageClick(`/storage/${record.clock_out_image}`)}
                                         />
                                     )}
                                 </td>
@@ -128,6 +139,20 @@ const AttendanceList = ({ auth }) => {
                         ))}
                     </tbody>
                 </table>
+            )}
+
+            {selectedImage && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75">
+                    <div className="relative">
+                        <button
+                            className="absolute top-2 right-2 text-white bg-red-500 hover:bg-red-700 rounded-full p-2"
+                            onClick={closeImageViewer}
+                        >
+                            &times;
+                        </button>
+                        <img src={selectedImage} alt="Zoomed" className="max-w-full max-h-full"/>
+                    </div>
+                </div>
             )}
         </AuthenticatedLayout>
     );

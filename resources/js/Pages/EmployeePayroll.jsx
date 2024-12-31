@@ -27,6 +27,8 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
     const [totalSalary, setTotalSalary] = useState(0);
     const [employees, setEmployees] = useState([]);
     const [error, setError] = useState(null);
+    const [payrollFromDate, setPayrollFromDate] = useState("");
+    const [payrollToDate, setPayrollToDate] = useState("");
 
     useEffect(() => {
         Promise.all([
@@ -63,6 +65,8 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
                 deductions: Object.values(deductions).reduce((a, b) => a + b, 0),
                 days_worked: daysWorked,
                 total_salary: totalSalary,
+                payroll_from_date: payrollFromDate,
+                payroll_to_date: payrollToDate,
             });
             onClose();
         } catch (error) {
@@ -81,29 +85,30 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
             setName(payroll.name);
             setPosition(payroll.position);
             setDepartment(payroll.department);
-            setBasicPay(Number(payroll.salary) || 0); // Ensure basicPay is a number
-            setOvertime(Number(payroll.overtime) || 0); // Ensure overtime is a number
+            setBasicPay(Number(payroll.salary) || 0);
+            setOvertime(Number(payroll.overtime) || 0);
             setDeductions({
-                sss: payroll.sss ? Number(payroll.sss) : 0, // Ensure sss is a number
-                pagIbig: payroll.pag_ibig ? Number(payroll.pag_ibig) : 0, // Ensure pagIbig is a number
-                philHealth: payroll.phil_health ? Number(payroll.phil_health) : 0, // Ensure philHealth is a number
+                sss: payroll.sss ? Number(payroll.sss) : 0,
+                pagIbig: payroll.pag_ibig ? Number(payroll.pag_ibig) : 0,
+                philHealth: payroll.phil_health ? Number(payroll.phil_health) : 0,
             });
-            setDaysWorked(payroll.days_worked || 0); // Ensure daysWorked is a number
+            setDaysWorked(payroll.days_worked || 0);
+            setPayrollFromDate(payroll.payroll_from_date || ""); // Set from date
+            setPayrollToDate(payroll.payroll_to_date || ""); // Set to date
         }
     }, [payroll]);
 
     useEffect(() => {
-    const validBasicPay = isNaN(basicPay) ? 0 : basicPay;
-    const validOvertime = isNaN(overtime) ? 0 : overtime;
-    const validDeductions = Object.values(deductions).reduce((acc, deduction) => {
-        return acc + (isNaN(deduction) ? 0 : deduction);
-    }, 0);
-    const validDaysWorked = isNaN(daysWorked) ? 0 : daysWorked;
-    const totalEarnings = validBasicPay * validDaysWorked + validOvertime;
-    const computedTotalSalary = totalEarnings - validDeductions;
-    setTotalSalary(isNaN(computedTotalSalary) ? 0 : computedTotalSalary);
-}, [basicPay, overtime, deductions, daysWorked]);  // Dependencies that trigger recalculation
-
+        const validBasicPay = isNaN(basicPay) ? 0 : basicPay;
+        const validOvertime = isNaN(overtime) ? 0 : overtime;
+        const validDeductions = Object.values(deductions).reduce((acc, deduction) => {
+            return acc + (isNaN(deduction) ? 0 : deduction);
+        }, 0);
+        const validDaysWorked = isNaN(daysWorked) ? 0 : daysWorked;
+        const totalEarnings = validBasicPay * validDaysWorked + validOvertime;
+        const computedTotalSalary = totalEarnings - validDeductions;
+        setTotalSalary(isNaN(computedTotalSalary) ? 0 : computedTotalSalary);
+    }, [basicPay, overtime, deductions, daysWorked]);
 
     if (!isOpen) return null;
 
@@ -159,6 +164,29 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
 
                     <div className="grid grid-cols-2 gap-4 mb-4">
                         <div>
+                            <label className="block text-gray-700">Payroll From Date</label>
+                            <input
+                                type="date"
+                                value={payrollFromDate}
+                                onChange={(e) => setPayrollFromDate(e.target.value)}
+                                className="mt-1 block w-full border border-gray-300 rounded p-2"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">Payroll To Date</label>
+                            <input
+                                type="date"
+                                value={payrollToDate}
+                                onChange={(e) => setPayrollToDate(e.target.value)}
+                                className="mt-1 block w-full border border-gray-300 rounded p-2"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div>
                             <h4 className="text-lg font-bold mb-2">Total Earnings</h4>
                             <label className="block text-gray-700">Basic Pay</label>
                             <input
@@ -170,10 +198,10 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
                             <label className="block text-gray-700 mt-2">Days Worked</label>
                             <input
                                 type="number"
-                                value={daysWorked || ''} // Use an empty string if daysWorked is 0 or undefined
+                                value={daysWorked || ''}
                                 onChange={(e) => {
                                     const value = e.target.value;
-                                    setDaysWorked(value === '' ? '' : Number(value)); // Handle empty input
+                                    setDaysWorked(value === '' ? '' : Number(value));
                                 }}
                                 className="mt-1 block w-full border border-gray-300 rounded p-2"
                                 required
@@ -194,8 +222,8 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
                                 type="number"
                                 value={deductions.sss}
                                 onChange={(e) =>
-                                        setDeductions((prev) => ({ ...prev, sss: Number(e.target.value) }))}
-                                        
+                                    setDeductions((prev) => ({ ...prev, sss: Number(e.target.value) }))
+                                }
                                 className="mt-1 block w-full border border-gray-300 rounded p-2 bg-gray-100"
                             />
                             <label className="block text-gray-700 mt-2">Pag-IBIG Contribution</label>
@@ -203,7 +231,8 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
                                 type="number"
                                 value={deductions.pagIbig}
                                 onChange={(e) =>
-                                        setDeductions((prev) => ({ ...prev, pagIbig: Number(e.target.value) }))}
+                                    setDeductions((prev) => ({ ...prev, pagIbig: Number(e.target.value) }))
+                                }
                                 className="mt-1 block w-full border border-gray-300 rounded p-2 bg-gray-100"
                             />
                             <label className="block text-gray-700 mt-2">PhilHealth Contribution</label>
@@ -211,7 +240,8 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
                                 type="number"
                                 value={deductions.philHealth}
                                 onChange={(e) =>
-                                        setDeductions((prev) => ({ ...prev, philHealth: Number(e.target.value) }))}
+                                    setDeductions((prev) => ({ ...prev, philHealth: Number(e.target.value) }))
+                                }
                                 className="mt-1 block w-full border border-gray-300 rounded p-2 bg-gray-100"
                             />
                         </div>
@@ -221,7 +251,7 @@ const EmployeePayroll = ({ isOpen, onClose, payroll }) => {
                         <input
                             type="text"
                             value={formatCurrency(totalSalary)}
-                                                        readOnly
+                            readOnly
                             className="mt-1 block w-full border border-gray-300 rounded p-2 bg-gray-100"
                         />
                     </div>

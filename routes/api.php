@@ -100,5 +100,5 @@ Route::post('/attendance/reset', [AttendanceController::class, 'resetAttendance'
 
 
 
-Route::get('/employees', [EmployeeApiController::class, 'getAllEmployees']);
-Route::get('/attendance/{employee_id}', [AttendanceController::class, 'getEmployeeAttendanceList']);
+Route::get('/employees', [AttendanceController::class, 'listEmployees']);
+Route::get('/employee-attendance/{name}', [AttendanceController::class, 'getEmployeeAttendanceList']);

@@ -50,4 +50,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(EmployeeLeave::class);
     }
+
+     public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'name');
+    }
 }

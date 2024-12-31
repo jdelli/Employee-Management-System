@@ -10,13 +10,13 @@ class Attendance extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['employee_id', 'clock_in', 'clock_out', 'clock_in_image', 'clock_out_image'];
+    protected $fillable = [ 'name', 'clock_in', 'clock_out', 'clock_in_image', 'clock_out_image'];
 
 
     public function employee()
-    {
-        return $this->belongsTo(User::class, 'employee_id');
-    }
+{
+    return $this->belongsTo(User::class, 'name', 'name');
+}
     
 }
 

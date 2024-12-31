@@ -7,14 +7,13 @@ import "react-clock/dist/Clock.css";
 
 export default function EmployeeDashboard({ auth }) {
     const [attendance, setAttendance] = useState([]);
-    const [currentAttendanceId, setCurrentAttendanceId] = useState(null);
     const [loading, setLoading] = useState(false);
     const [currentTime, setCurrentTime] = useState(new Date());
     const [cameraActive, setCameraActive] = useState(false);
     const [capturedImage, setCapturedImage] = useState(null);
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const employeeId = auth.user.id;
+    const employeeName = auth.user.name;
 
     // Real-time clock
     useEffect(() => {
@@ -32,19 +31,32 @@ export default function EmployeeDashboard({ auth }) {
         setLoading(true);
         try {
             const currentDate = moment().format("YYYY-MM-DD");
-            const response = await apiService.get(`/attendance/${employeeId}?date=${currentDate}`);
-            setAttendance(response.data);
+            const response = await apiService.get(`/attendance/${employeeName}?date=${currentDate}`);
+            
+            // Filter for today's records only
+            const todaysRecords = response.data.filter(record => 
+                moment(record.clock_in).format("YYYY-MM-DD") === currentDate
+            );
+            
+            setAttendance(todaysRecords);
 
-            const activeRecord = response.data.find((record) => !record.clock_out);
-            if (activeRecord) setCurrentAttendanceId(activeRecord.id);
-
-            resetAttendanceIfNewDay(response.data);
+            // Check for day change and reset attendance if necessary
+            resetAttendanceIfNewDay(todaysRecords);
         } catch (error) {
             console.error("Error fetching attendance:", error);
         } finally {
             setLoading(false);
         }
     };
+    
+    // Add this new useEffect to check for day changes
+    useEffect(() => {
+        const dayCheckInterval = setInterval(() => {
+            fetchAttendance();
+        }, 60000); // Check every minute
+        
+        return () => clearInterval(dayCheckInterval);
+    }, []);
 
     const resetAttendanceIfNewDay = (attendanceRecords) => {
         const firstRecord = attendanceRecords[0];
@@ -104,18 +116,18 @@ export default function EmployeeDashboard({ auth }) {
         const photo = capturePhoto();
         const formData = new FormData();
         formData.append("employee_id", auth.user.id);
+        formData.append("name", auth.user.name);
         formData.append("clock_in", moment().format("YYYY-MM-DD HH:mm:ss"));
-        formData.append("clock_in_image", dataURItoBlob(photo)); // Convert the base64 image to a blob for upload
+        formData.append("clock_in_image", dataURItoBlob(photo));
 
         setLoading(true);
         try {
-            const response = await apiService.post("/attendance/clock-in", formData, {
+            await apiService.post("/attendance/clock-in", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
 
-            setCurrentAttendanceId(response.data.id);
             fetchAttendance();
         } catch (error) {
             console.error("Error clocking in:", error.response.data);
@@ -127,10 +139,17 @@ export default function EmployeeDashboard({ auth }) {
     const handleClockOut = async () => {
         const photo = capturePhoto();
         const formData = new FormData();
-        formData.append("attendance_id", currentAttendanceId);
         formData.append("clock_out", moment().format("YYYY-MM-DD HH:mm:ss"));
-        formData.append("clock_out_image", dataURItoBlob(photo)); // Convert the base64 image to a blob for upload
-
+        formData.append("clock_out_image", dataURItoBlob(photo));
+    
+        // Add the ID of the attendance record to the form data
+        const currentAttendance = attendance.find(record => !record.clock_out);
+        if (!currentAttendance) {
+            console.error("No ongoing attendance record found for clock out.");
+            return;
+        }
+        formData.append("id", currentAttendance.id);
+    
         setLoading(true);
         try {
             await apiService.post("/attendance/clock-out", formData, {
@@ -138,8 +157,7 @@ export default function EmployeeDashboard({ auth }) {
                     "Content-Type": "multipart/form-data",
                 },
             });
-
-            setCurrentAttendanceId(null);
+    
             fetchAttendance();
         } catch (error) {
             console.error("Error clocking out:", error);
@@ -164,6 +182,9 @@ export default function EmployeeDashboard({ auth }) {
 
         return new Blob([uintArray], { type: mimeString });
     };
+
+    // Determine if the employee has clocked in today
+    const hasClockedInToday = attendance.some(record => record.clock_in && !record.clock_out);
 
     return (
         <EmployeeLayout
@@ -196,8 +217,8 @@ export default function EmployeeDashboard({ auth }) {
                             startCamera();
                             handleClockIn();
                         }}
-                        disabled={!!currentAttendanceId || loading}
-                        className={`w-36 py-3 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105 ${!!currentAttendanceId || loading ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"}`}
+                        disabled={loading || hasClockedInToday}
+                        className={`w-36 py-3 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105 ${loading || hasClockedInToday ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"}`}
                     >
                         {loading ? "Clocking In..." : "Clock In"}
                     </button>
@@ -206,8 +227,8 @@ export default function EmployeeDashboard({ auth }) {
                             startCamera();
                             handleClockOut();
                         }}
-                        disabled={!currentAttendanceId || loading}
-                        className={`w-36 py-3 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105 ${!currentAttendanceId || loading ? "bg-gray-300 cursor-not-allowed" : "bg-red-500 text-white hover:bg-red-600"}`}
+                        disabled={loading || !hasClockedInToday}
+                        className={`w-36 py-3 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105 ${loading || !hasClockedInToday ? "bg-gray-300 cursor-not-allowed" : "bg-red-500 text-white hover:bg-red-600"}`}
                     >
                         {loading ? "Clocking Out..." : "Clock Out"}
                     </button>
