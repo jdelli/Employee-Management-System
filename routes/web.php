@@ -30,6 +30,10 @@ Route::middleware(['checkrole:user'])->group(function () {
     Route::get('/user-leave', function () {
         return Inertia::render('EmployeeRoutePage/EmployeeLeave');
     })->name('user-leave');
+
+    Route::get('/user-announcement', function () {
+        return Inertia::render('EmployeeRoutePage/EmployeeAnnouncement');
+    })->name('user-announcement');
 });
 
 
@@ -55,6 +59,10 @@ Route::middleware(['checkrole:admin'])->group(function () {
     Route::get('/admin-attendance', function () {
         return Inertia::render('EmployeeAttendanceList');
     })->name('attendance');
+    
+    Route::get('/admin-announcement', function () {
+        return Inertia::render('Announcement');
+    })->name('announcement');
 });
 
 

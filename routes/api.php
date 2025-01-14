@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\EmployeeApiController;
 use App\Http\Controllers\Api\PayrollApiController;
 use App\Http\Controllers\Api\EmployeeLeaveController;
 use App\Http\Controllers\Api\AttendanceController;
+use App\Http\Controllers\Api\AnnouncementController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -107,3 +108,14 @@ Route::get('/employee-attendance/{name}', [AttendanceController::class, 'getEmpl
 
 
 Route::get('/employee/days-worked', [PayrollApiController::class, 'getDaysWorked']);
+
+
+
+
+
+
+
+Route::get('/unread-announcements-count', [AnnouncementController::class, 'getUnreadAnnouncementsCount']);
+Route::post('/mark-announcements-read', [AnnouncementController::class, 'markAnnouncementsAsRead']);
+Route::get('/announcements', [AnnouncementController::class, 'getAnnouncements']);
+Route::post('/announcements', [AnnouncementController::class, 'storeAnnouncement']);

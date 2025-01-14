@@ -1,12 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link } from "@inertiajs/react";
+import apiService from "@/Pages/services/ApiServices";
 
 export default function EmployeeLayout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    const [unreadAnnouncements, setUnreadAnnouncements] = useState(0);
+
+
+    useEffect(() => {
+        const fetchUnreadAnnouncements = async () => {
+            try {
+                const response = await apiService.get("/unread-announcements-count", {
+                    params: { user_id: user.id }, // Pass the user ID
+                });
+                setUnreadAnnouncements(response.data.unread_count);
+            } catch (error) {
+                console.error("Failed to fetch unread announcements", error);
+            }
+        };
+
+        fetchUnreadAnnouncements();
+    }, []);
+
+    const markAnnouncementsAsRead = async () => {
+        try {
+            await apiService.post("/mark-announcements-read", { user_id: user.id });
+            setUnreadAnnouncements(0); // Remove badge when announcements are marked as read
+        } catch (error) {
+            console.error("Failed to mark announcements as read", error);
+        }
+    };
+
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -29,6 +57,18 @@ export default function EmployeeLayout({ user, header, children }) {
                                 </NavLink>
                                 <NavLink href={route("user-leave")} active={route().current("user-leave")}>
                                     Leave
+                                </NavLink>
+                                <NavLink
+                                    href={route("user-announcement")}
+                                    active={route().current("user-announcement")}
+                                    onClick={markAnnouncementsAsRead} // Call the mark announcements function on click
+                                >
+                                    Announcements
+                                    {unreadAnnouncements > 0 && (
+                                        <span className="ml-1 px-2 py-0.5 text-xs text-white bg-red-500 rounded-full">
+                                            {unreadAnnouncements}
+                                        </span>
+                                    )}
                                 </NavLink>
                                
                             </div>
