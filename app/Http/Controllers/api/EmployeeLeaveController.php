@@ -76,6 +76,15 @@ public function getEmployeeLeaves(Request $request)
     }
 
 
+    public function countPendingLeaves()
+    {
+        // Fetch all employee leave data, possibly including user relationship
+        $leaves = EmployeeLeave::where('status', 0)->count();
+        // Return the data as JSON
+        return response()->json(['leaves' => $leaves]);
+    }
+
+
 
 
     public function acceptLeave($id)

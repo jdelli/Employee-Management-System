@@ -1,6 +1,6 @@
 import React from 'react';
 
-const EmployeeCard = ({ numberOfEmployees, totalPayrolls }) => (
+const EmployeeCard = ({ numberOfEmployees, totalPayrolls, leaveRequests }) => (
   <div className="p-6 bg-white shadow-lg rounded-lg border border-gray-200">
     <div className="flex flex-col space-y-4">
       {/* Total Employees Section */}
@@ -11,8 +11,13 @@ const EmployeeCard = ({ numberOfEmployees, totalPayrolls }) => (
 
       {/* Total Payrolls Section */}
       <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg shadow-inner">
-        <h2 className="text-xl font-semibold text-gray-800">Total Pending Payrolls:</h2>
+        <h2 className="text-xl font-semibold text-gray-800">Pending Payrolls:</h2>
         <span className="text-lg font-bold text-green-600">{totalPayrolls}</span>
+      </div>
+      {/* Total Leave Requests Section */}
+      <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg shadow-inner">
+        <h2 className="text-xl font-semibold text-gray-800">Pending Leave Request:</h2>
+        <span className="text-lg font-bold text-green-600">{leaveRequests}</span>
       </div>
     </div>
   </div>

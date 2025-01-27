@@ -17,6 +17,7 @@ import apiService from './services/ApiServices';
 const Dashboard = ({ auth }) => {
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [totalPayrolls, setTotalPayrolls] = useState(0);
+  const [leaveRequests, setLeaveRequests] = useState(0);
   const [totalITEmployees, setTotalITEmployees] = useState(0);
   const [totalHREmployees, setTotalHREmployees] = useState(0);
   const [totalFinanceEmployees, setTotalFinanceEmployees] = useState(0);
@@ -25,16 +26,27 @@ const Dashboard = ({ auth }) => {
   useEffect(() => {
     const fetchEmployeeCounts = async () => {
       try {
-        const [employees, payroll, it, hr, finance, marketing] = await Promise.all([
+        const [
+          employees,
+          payroll,
+          leave,
+          it,
+          hr,
+          finance,
+          marketing
+        ] = await Promise.all([
           apiService.get('count'),
           apiService.get('/count-pending-payroll'),
+          apiService.get('/get-pending-employee-leaves'),
           apiService.get('countIT'),
           apiService.get('countHR'),
           apiService.get('countFinance'),
           apiService.get('countMarketing')
         ]);
+
         setTotalEmployees(employees.data.total);
         setTotalPayrolls(payroll.data.payrollCount);
+        setLeaveRequests(leave.data.leaves); // Assuming leave.data.leaves is the correct path
         setTotalITEmployees(it.data.totalIt);
         setTotalHREmployees(hr.data.totalHR);
         setTotalFinanceEmployees(finance.data.totalFinance);
@@ -64,7 +76,7 @@ const Dashboard = ({ auth }) => {
       <div className="py-12 bg-gray-100">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <EmployeeCard numberOfEmployees={totalEmployees} totalPayrolls={totalPayrolls} />
+            <EmployeeCard numberOfEmployees={totalEmployees} totalPayrolls={totalPayrolls} leaveRequests={leaveRequests} />
           </div>
 
           {/* Employee Growth Chart Section */}

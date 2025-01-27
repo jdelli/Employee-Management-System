@@ -50,7 +50,7 @@ export default function EmployeeLayout({ user, header, children }) {
 
                             <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink href={route("user-dashboard")} active={route().current("user-dashboard")}>
-                                    Dashboard
+                                    Attendance
                                 </NavLink>
                                 <NavLink href={route("user-payroll")} active={route().current("user-payroll")}>
                                     Payroll

@@ -189,7 +189,7 @@ export default function EmployeeDashboard({ auth }) {
     return (
         <EmployeeLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-2xl text-gray-800 leading-tight">Employee Dashboard</h2>}
+            header={<h2 className="font-semibold text-2xl text-gray-800 leading-tight">Attendance</h2>}
         >
             <div className="max-w-4xl mx-auto mt-6 px-4">
                 {/* Clock Section */}

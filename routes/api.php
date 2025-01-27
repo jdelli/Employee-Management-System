@@ -88,6 +88,7 @@ Route::put('/employee-leaves/{id}/reject', [EmployeeLeaveController::class, 'rej
 
 
 Route::get('/get-all-employee-leaves', [EmployeeLeaveController::class, 'fetchEmployeeLeaves']);
+Route::get('/get-pending-employee-leaves', [EmployeeLeaveController::class, 'countPendingLeaves']);
 
 
 
