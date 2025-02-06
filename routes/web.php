@@ -16,9 +16,7 @@ Route::get('/', function () {
 });
 
 
-
-Route::middleware(['checkrole:user'])->group(function () {
-    // User routes
+Route::middleware(['auth:sanctum', 'checkrole:user'])->group(function () {
     Route::get('/user-dashboard', function () {
         return Inertia::render('EmployeeRoutePage/EmployeeDashboard');
     })->name('user-dashboard');
@@ -37,9 +35,7 @@ Route::middleware(['checkrole:user'])->group(function () {
 });
 
 
-
-
-Route::middleware(['checkrole:admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'checkrole:admin'])->group(function () {
     Route::get('/admin-dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
@@ -65,17 +61,8 @@ Route::middleware(['checkrole:admin'])->group(function () {
     })->name('announcement');
 });
 
-
-
-
-
-
-
-
-
-
-
-Route::middleware('auth')->group(function () {
+// Profile routes (auth required)
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
